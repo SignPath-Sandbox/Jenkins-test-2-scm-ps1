@@ -6,7 +6,7 @@ pipeline {
             steps {
                 sh '''
                     mkdir -p build-output
-                    echo 'Write-Host "Hello World 2 - custom 2 revision 2 - main branch"' > build-output/script.ps1
+                    echo 'Write-Host "Hello World 2 - custom 2 revision 3 - main branch"' > build-output/script.ps1
                     ls -lh build-output
                     cat build-output/script.ps1
                 '''
