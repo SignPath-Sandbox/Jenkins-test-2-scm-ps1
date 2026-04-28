@@ -2,20 +2,21 @@ pipeline {
     agent any
 
     stages {
-        stage('Create PowerShell file') {
+        stage('Checkout PowerShell source - Custom Jenkinsfile') {
             steps {
+                git branch: 'main',
+                    url: 'https://github.com/SignPath-Sandbox/Jenkins-test-3-scm-ps1.git'
+
                 sh '''
-                    mkdir -p build-output
-                    echo 'Write-Host "Hello World 2 - custom 2 revision 3 - main branch"' > build-output/script.ps1
-                    ls -lh build-output
-                    cat build-output/script.ps1
+                    ls -lh
+                    cat script.ps1
                 '''
             }
         }
 
         stage('Archive artifact') {
             steps {
-                archiveArtifacts artifacts: 'build-output/**', fingerprint: true
+                archiveArtifacts artifacts: 'script.ps1', fingerprint: true
             }
         }
 
@@ -26,7 +27,7 @@ pipeline {
                     projectSlug: 'Jenkins-Project',
                     signingPolicySlug: 'Jenkins_signing_policy',
                     artifactConfigurationSlug: 'Powershell',
-                    inputArtifactPath: 'build-output/script.ps1',
+                    inputArtifactPath: 'script.ps1',
                     waitForCompletion: true
                 )
             }
