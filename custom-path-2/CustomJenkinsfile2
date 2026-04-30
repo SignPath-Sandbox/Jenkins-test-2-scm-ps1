@@ -1,22 +1,58 @@
-pipeline {
+pipeline { 
     agent any
 
     stages {
-        stage('Checkout PowerShell source - Custom Jenkinsfile') {
+        stage('Checkout multiple sources') {
             steps {
-                git branch: 'main',
-                    url: 'https://github.com/SignPath-Sandbox/Jenkins-test-3-scm-ps1.git'
+                dir('source-1-test') {
+                    git branch: 'main',
+                        url: 'https://github.com/SignPath-Sandbox/Jenkins-test-scm-ps1.git'
+                }
+
+                dir('source-2-test-2') {
+                    git branch: 'main',
+                        url: 'https://github.com/SignPath-Sandbox/Jenkins-test-2-scm-ps1.git'
+                }
+
+                dir('source-3-test-3') {
+                    git branch: 'main',
+                        url: 'https://github.com/SignPath-Sandbox/Jenkins-test-3-scm-ps1.git'
+                }
 
                 sh '''
+                    echo "=== Workspace ==="
                     ls -lh
-                    cat script.ps1
+
+                    echo "=== Source 1 ==="
+                    ls -lh source-1-test || true
+
+                    echo "=== Source 2 ==="
+                    ls -lh source-2-test-2 || true
+
+                    echo "=== Source 3 ==="
+                    ls -lh source-3-test-3 || true
+                '''
+            }
+        }
+
+        stage('Prepare artifact') {
+            steps {
+                sh '''
+                    mkdir -p build-output
+
+                    # Choose which checked-out repo provides the artifact to sign
+                    cp source-3-test-3/script.ps1 build-output/script.ps1
+
+                    echo "=== Artifact to sign ==="
+                    ls -lh build-output
+                    cat build-output/script.ps1
                 '''
             }
         }
 
         stage('Archive artifact') {
             steps {
-                archiveArtifacts artifacts: 'script.ps1', fingerprint: true
+                archiveArtifacts artifacts: 'build-output/script.ps1', fingerprint: true
             }
         }
 
@@ -27,7 +63,7 @@ pipeline {
                     projectSlug: 'Jenkins-Project',
                     signingPolicySlug: 'Jenkins_signing_policy',
                     artifactConfigurationSlug: 'Powershell',
-                    inputArtifactPath: 'script.ps1',
+                    inputArtifactPath: 'build-output/script.ps1',
                     waitForCompletion: true
                 )
             }
