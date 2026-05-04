@@ -4,9 +4,9 @@ pipeline {
     stages {
         stage('Checkout multiple sources') {
             steps {
-                dir('source-1-test') {
+                dir('source-1-test-1') {
                     git branch: 'main',
-                        url: 'https://github.com/SignPath-Sandbox/Jenkins-test-scm-ps1.git'
+                        url: 'https://github.com/SignPath-Sandbox/Jenkins-test-1-scm-ps1.git'
                 }
 
                 dir('source-2-test-2') {
@@ -24,7 +24,7 @@ pipeline {
                     ls -lh
 
                     echo "=== Source 1 ==="
-                    ls -lh source-1-test || true
+                    ls -lh source-1-test-1 || true
 
                     echo "=== Source 2 ==="
                     ls -lh source-2-test-2 || true
